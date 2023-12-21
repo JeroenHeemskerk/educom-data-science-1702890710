@@ -1,0 +1,1 @@
+SELECT name, straat, postcode, huisnr FROM mhl_suppliers WHERE membertype IN (1, 2, 3, 8)
