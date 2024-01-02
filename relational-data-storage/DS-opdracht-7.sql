@@ -1,5 +1,5 @@
 DELIMITER $$
-
+DROP TRIGGER IF EXISTS fired;
 CREATE TRIGGER fired
     AFTER UPDATE 
     ON employees
@@ -12,17 +12,19 @@ BEGIN
     END IF;
 END$$    
 
+
 DELIMITER ;
 
 DELIMITER $$
 
+DROP FUNCTION IF EXISTS checkIfFired;
 CREATE FUNCTION checkIfFired(
     employee INT
 )
 RETURNS VARCHAR(5)
 DETERMINISTIC
 BEGIN
-	IF (SELECT date_fired FROM employees WHERE employeeNumber = employee) = NULL
+	IF (SELECT date_fired FROM employees WHERE employeeNumber = employee) IS NULL
     THEN RETURN ('');
     ELSE RETURN ('FIRED');
     END IF;
@@ -32,6 +34,7 @@ DELIMITER ;
 
 DELIMITER $$
 
+DROP VIEW IF EXISTS v_employeeStatus;
 CREATE VIEW v_employeeStatus
 AS
 SELECT employeeNumber, lastName, firstName, checkIfFired(employeeNumber)
@@ -42,6 +45,7 @@ DELIMITER ;
 
 DELIMITER $$
 
+DROP PROCEDURE IF EXISTS p_giveRaise;
 CREATE PROCEDURE p_giveRaise()
 BEGIN
     UPDATE employees
@@ -53,6 +57,7 @@ DELIMITER ;
 
 DELIMITER $$
 
+DROP PROCEDURE IF EXISTS p_removeFired;
 CREATE PROCEDURE p_removeFired()
 BEGIN
     DELETE FROM employees
@@ -63,6 +68,7 @@ DELIMITER ;
 
 DELIMITER $$
 
+DROP PROCEDURE IF EXISTS archiveSalary;
 CREATE TRIGGER archiveSalary
     AFTER UPDATE 
     ON employees
@@ -76,3 +82,5 @@ BEGIN
 END$$    
 
 DELIMITER ;
+
+CALL giveRaise()
